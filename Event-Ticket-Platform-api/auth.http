@@ -1,0 +1,10 @@
+# Keycloak OIDC Token Testing
+POST http://localhost:9090/realms/event-ticket-platform/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type = password
+client_id=event-ticket-platform-app
+client_secret=dPNz9XuyHdaXU5S4apIhEwGd8hlhkmPu
+username=organizer
+password=password
+scope=openid profile email

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.elkased.eventticketplatform.filters.UserProvisioningFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,7 +20,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, UserProvisioningFilter userProvisioningFilter) {
         httpSecurity
                 .authorizeHttpRequests(authorize ->
-                        authorize.anyRequest().authenticated())
+                        authorize
+                                .requestMatchers(HttpMethod.GET, "/api/v1/published-events/**").permitAll()
+                                .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -6,6 +6,7 @@ import org.elkased.eventticketplatform.domain.CreateEventRequest;
 import org.elkased.eventticketplatform.domain.UpdateEventRequest;
 import org.elkased.eventticketplatform.domain.UpdateTicketTypeRequest;
 import org.elkased.eventticketplatform.domain.entities.Event;
+import org.elkased.eventticketplatform.domain.entities.EventStatusEnum;
 import org.elkased.eventticketplatform.domain.entities.TicketType;
 import org.elkased.eventticketplatform.domain.entities.User;
 import org.elkased.eventticketplatform.exceptions.EventNotFoundException;
@@ -13,8 +14,6 @@ import org.elkased.eventticketplatform.exceptions.EventUpdateException;
 import org.elkased.eventticketplatform.exceptions.TicketTypeNotFoundException;
 import org.elkased.eventticketplatform.exceptions.UserNotFoundException;
 import org.elkased.eventticketplatform.repositories.EventRepository;
-import org.elkased.eventticketplatform.repositories.TicketRepository;
-import org.elkased.eventticketplatform.repositories.TicketTypeRepository;
 import org.elkased.eventticketplatform.repositories.UserRepository;
 import org.elkased.eventticketplatform.services.EventService;
 import org.springframework.data.domain.Page;
@@ -30,15 +29,14 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
-    private final TicketRepository ticketRepository;
-    private final TicketTypeRepository ticketTypeRepository;
 
     @Override
     @Transactional
     public Event createEvent(UUID organizerId, CreateEventRequest event) {
         User organizer = userRepository.findById(organizerId)
                 .orElseThrow(() ->
-                        new UserNotFoundException(String.format("User with id '%s' not found", organizerId)));
+                        new UserNotFoundException(String.format("User with id '%s' not found", organizerId))
+                );
         Event eventToCreate = new Event();
         List<TicketType> ticketTypes = event.getTicketTypes().stream()
                 .map(ticket -> TicketType.builder()
@@ -139,6 +137,27 @@ public class EventServiceImpl implements EventService {
                 );
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteEvent(UUID organizerId, UUID eventId) {
+        getEventForOrganizer(eventId, organizerId).ifPresent(eventRepository::delete);
+    }
+
+    @Override
+    public Page<Event> listPublishedEvents(Pageable pageable) {
+        return eventRepository.findEventsByStatus(EventStatusEnum.PUBLISHED, pageable);
+    }
+
+    @Override
+    public Page<Event> searchPublishedEvents(String query, Pageable pageable) {
+        return eventRepository.searchEvents(query, pageable);
+    }
+
+    @Override
+    public Optional<Event> getPublishedEvent(UUID eventId) {
+        return eventRepository.findEventByIdAndStatus(eventId, EventStatusEnum.PUBLISHED);
     }
 }
 

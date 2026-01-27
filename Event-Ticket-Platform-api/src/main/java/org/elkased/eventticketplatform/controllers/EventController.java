@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.elkased.eventticketplatform.util.JwtUtil.parseUserId;
+
 @RestController
 @RequestMapping("api/v1/events")
 @RequiredArgsConstructor
@@ -80,9 +82,5 @@ public class EventController {
         UUID user = parseUserId(jwt);
         eventService.deleteEvent(user, eventId);
         return ResponseEntity.noContent().build();
-    }
-
-    private UUID parseUserId(Jwt jwt) {
-        return UUID.fromString(jwt.getSubject());
     }
 }

@@ -8,6 +8,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/backend/Event-Ticket-Platform/pom.xml" />
+        <option value="$PROJECT_DIR$/Event-Ticket-Platform-api/pom.xml" />
       </list>
     </option>
   </component>

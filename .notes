@@ -1,3 +1,0 @@
-1- Login Issue
-    is related to the Keycloak configuration specifically weborigin
-    must be http://localhost:5173

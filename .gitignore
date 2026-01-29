@@ -1,5 +1,6 @@
 node_modules/
 dist/
 target/
-.env!/CV-PROJECT-DESCRIPTION.md
-!/.notes
+.env
+CV-PROJECT-DESCRIPTION.md
+.notes

@@ -6,10 +6,12 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.elkased.eventticketplatform.domain.entities.QrCode;
 import org.elkased.eventticketplatform.domain.entities.QrCodeStatusEnum;
 import org.elkased.eventticketplatform.domain.entities.Ticket;
 import org.elkased.eventticketplatform.exceptions.QrCodeGenerationException;
+import org.elkased.eventticketplatform.exceptions.QrCodeNotFoundException;
 import org.elkased.eventticketplatform.repositories.QrCodeRepository;
 import org.elkased.eventticketplatform.services.QrCodeService;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QrCodeServiceImpl implements QrCodeService {
     private static final int QR_HEIGHT = 300;
     private static final int QR_WIDTH = 300;
@@ -57,6 +60,18 @@ public class QrCodeServiceImpl implements QrCodeService {
             return Base64.getEncoder().encodeToString(byteArray);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public byte[] getQrCodeImageForUserAndTicket(UUID userId, UUID ticketId) {
+        QrCode qrCode = qrCodeRepository.findQrCodeByTicketIdAndTicketPurchaserId(ticketId, userId)
+                .orElseThrow(QrCodeNotFoundException::new);
+        try {
+            return Base64.getDecoder().decode(qrCode.getValue());
+        }catch (IllegalArgumentException ex){
+            log.error("Invalid Base64 QR Code for ticket {}", ticketId, ex);
+            throw new QrCodeNotFoundException();
         }
     }
 }

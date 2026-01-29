@@ -26,9 +26,6 @@ public class TicketValidation {
     @Enumerated(EnumType.STRING)
     private TicketValidationStatusEnum status;
 
-    @Column(name = "validation_date", nullable = false)
-    private LocalDateTime validationDate;
-
     @Column(name = "validation_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private TicketValidationMethod validationMethod;
@@ -50,14 +47,13 @@ public class TicketValidation {
         if (o == null || getClass() != o.getClass()) return false;
 
         TicketValidation that = (TicketValidation) o;
-        return Objects.equals(id, that.id) && status == that.status && Objects.equals(validationDate, that.validationDate) && validationMethod == that.validationMethod && Objects.equals(createdAt, that.createdAt) && Objects.equals(updated, that.updated);
+        return Objects.equals(id, that.id) && status == that.status && validationMethod == that.validationMethod && Objects.equals(createdAt, that.createdAt) && Objects.equals(updated, that.updated);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hashCode(id);
         result = 31 * result + Objects.hashCode(status);
-        result = 31 * result + Objects.hashCode(validationDate);
         result = 31 * result + Objects.hashCode(validationMethod);
         result = 31 * result + Objects.hashCode(createdAt);
         result = 31 * result + Objects.hashCode(updated);

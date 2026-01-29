@@ -8,4 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface TicketValidationRepository extends JpaRepository<TicketValidation, UUID> {
+
+
 }
